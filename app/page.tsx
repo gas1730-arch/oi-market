@@ -40,13 +40,41 @@ const initialAuctions: AuctionItem[] = [
 export default function Home() {
   const [items, setItems] = useState<AuctionItem[]>(initialAuctions);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const categories = ['농산물', '가전', '의류', '가구', '무료나눔'];
+  const [activeCat, setActiveCat] = useState<string | null>(null);
+
+  const filtered = items.filter((it) => {
+    if (activeCat && activeCat !== '전체' && it.title.indexOf(activeCat) === -1 && it.description.indexOf(activeCat) === -1) return false;
+    if (!query) return true;
+    return it.title.toLowerCase().includes(query.toLowerCase()) || it.description.toLowerCase().includes(query.toLowerCase());
+  });
+
+  function fmt(price?: number) {
+    if (!price) return '-';
+    return new Intl.NumberFormat('ko-KR').format(price) + '원';
+  }
+
+  function timeLeft(item: AuctionItem) {
+    const now = Date.now();
+    const ends = (item.endsAt.seconds || 0) * 1000;
+    const diff = Math.max(0, ends - now);
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    return `${hours}시간 ${minutes}분`;
+  }
 
   async function handleBuyNow(index: number) {
     const item = items[index];
-    if (!item || item.status !== "OPEN" || !item.buyNowPrice) return;
+    if (!item || item.status !== 'OPEN' || !item.buyNowPrice) return;
     setLoadingId(item.title);
 
-    // Try to call server API first
+    // 낙관적 UI: 먼저 로컬 상태 갱신
+    const backup = items[index];
+    const newItems = [...items];
+    newItems[index] = { ...item, status: 'SOLD', currentPrice: item.buyNowPrice } as AuctionItem;
+    setItems(newItems);
+
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
       const res = await fetch('/api/bid', {
@@ -58,83 +86,103 @@ export default function Home() {
         body: JSON.stringify({ itemId: item.title, amount: item.buyNowPrice }),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data?.status === 'sold' || data?.status === 'accepted') {
-          // 성공: 상태 업데이트
-          const newItems = [...items];
-          newItems[index] = { ...item, status: 'SOLD', currentPrice: item.buyNowPrice } as AuctionItem;
-          setItems(newItems);
-          setLoadingId(null);
-          alert('즉시 구매가 완료되었습니다.');
-          return;
-        }
-      } else if (res.status === 401) {
-        // 인증 필요: 개발 모드에서는 로컬 상태로 처리
-        const newItems = [...items];
-        newItems[index] = { ...item, status: 'SOLD', currentPrice: item.buyNowPrice } as AuctionItem;
-        setItems(newItems);
-        setLoadingId(null);
-        alert('로그인 필요 (개발 모드): 로컬에서 즉시 구매 처리했습니다.');
-        return;
+      if (!res.ok) {
+        if (res.status === 401) throw new Error('auth-required');
+        throw new Error('server-error');
       }
 
-      // 그 외 실패는 로컬 처리
-      const newItems = [...items];
-      newItems[index] = { ...item, status: 'SOLD', currentPrice: item.buyNowPrice } as AuctionItem;
-      setItems(newItems);
+      const data = await res.json();
+      if (!(data?.status === 'sold' || data?.status === 'accepted')) throw new Error('accepted-failed');
+
       setLoadingId(null);
-      alert('서버 호출 실패: 로컬에서 즉시 구매 처리했습니다.');
-    } catch (e) {
-      const newItems = [...items];
-      newItems[index] = { ...item, status: 'SOLD', currentPrice: item.buyNowPrice } as AuctionItem;
-      setItems(newItems);
+      alert('즉시 구매가 완료되었습니다.');
+    } catch (e: any) {
+      // 실패하면 롤백
+      const revert = [...items];
+      revert[index] = backup;
+      setItems(revert);
       setLoadingId(null);
-      alert('오류 발생: 로컬에서 즉시 구매 처리했습니다.');
+      if (e.message === 'auth-required') alert('로그인이 필요합니다. (개발모드: 서버 미연동)');
+      else alert('즉시구매에 실패했습니다. 문제를 확인하세요.');
     }
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans p-8">
-      <header className="max-w-4xl mx-auto mb-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">오이마켓</h1>
-        <div className="text-sm text-zinc-600">경매 / 즉시구매 샘플</div>
+    <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans p-6">
+      <header className="max-w-5xl mx-auto mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">오이마켓</h1>
+          <div className="text-sm text-zinc-500">지역 기반 중고 & 경매 마켓</div>
+        </div>
+        <div className="flex items-center gap-3">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="검색어를 입력해보세요 (예: 오이, 유기농)"
+            className="border rounded-md px-3 py-2 w-64 bg-white"
+          />
+          <button className="text-sm text-white bg-orange-500 px-3 py-2 rounded-md">내 동네</button>
+        </div>
       </header>
 
-      <main className="max-w-4xl mx-auto grid gap-6">
-        {items.map((it, idx) => (
-          <article key={it.title} className="flex items-center gap-4 rounded-lg bg-white p-4 shadow-sm">
-            <div className="w-28 h-28 relative flex-shrink-0 rounded-md bg-zinc-100 overflow-hidden">
-              {it.images[0] ? (
-                // 이미지 파일이 public에 없을 수 있어 간단한 <img>로 렌더링
-                <img src={it.images[0]} alt={it.title} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-zinc-400">이미지</div>
-              )}
-            </div>
-            <div className="flex flex-1 flex-col">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">{it.title}</h2>
-                <div className="text-sm text-zinc-500">{it.region}</div>
+      <main className="max-w-5xl mx-auto">
+        <nav className="flex gap-3 mb-4 overflow-auto">
+          <button
+            className={`px-3 py-1 rounded-full ${!activeCat ? 'bg-orange-100 text-orange-600' : 'bg-white'}`}
+            onClick={() => setActiveCat(null)}
+          >전체</button>
+          {categories.map((c) => (
+            <button
+              key={c}
+              className={`px-3 py-1 rounded-full ${activeCat === c ? 'bg-orange-100 text-orange-600' : 'bg-white'}`}
+              onClick={() => setActiveCat(activeCat === c ? null : c)}
+            >{c}</button>
+          ))}
+        </nav>
+
+        <section className="grid sm:grid-cols-2 gap-4">
+          {filtered.map((it, idx) => (
+            <article key={it.title} className="rounded-lg bg-white p-4 shadow-sm flex">
+              <div className="w-32 h-32 rounded-md overflow-hidden flex-shrink-0 bg-zinc-100">
+                {it.images[0] ? (
+                  <img src={it.images[0]} alt={it.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-zinc-400">이미지</div>
+                )}
               </div>
-              <p className="text-sm text-zinc-600 mt-1">{it.description}</p>
-              <div className="mt-3 flex items-center gap-4">
-                <div className="text-sm text-zinc-500">현재가: <span className="font-medium">{it.currentPrice}원</span></div>
-                {it.buyNowPrice && <div className="text-sm text-zinc-500">즉시구매: <span className="font-medium">{it.buyNowPrice}원</span></div>}
+              <div className="flex-1 px-4 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">{it.title}</h3>
+                    <div className="text-sm text-zinc-500">{it.region}</div>
+                  </div>
+                  <p className="text-sm text-zinc-600 mt-1 line-clamp-2">{it.description}</p>
+                </div>
+
+                <div className="flex items-center justify-between mt-3">
+                  <div>
+                    <div className="text-sm text-zinc-500">현재가</div>
+                    <div className="text-xl font-bold text-zinc-900">{fmt(it.currentPrice)}</div>
+                    {it.buyNowPrice && <div className="text-sm text-orange-600">즉시구매 {fmt(it.buyNowPrice)}</div>}
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <button
+                      className="bg-orange-500 text-white px-3 py-2 rounded-md disabled:opacity-50"
+                      onClick={() => handleBuyNow(idx)}
+                      disabled={it.status !== 'OPEN' || loadingId === it.title}
+                    >
+                      {loadingId === it.title ? '처리중...' : '즉시 구매'}
+                    </button>
+                    <div className="text-xs text-zinc-500">남은시간: {timeLeft(it)}</div>
+                    <div className="text-xs text-zinc-500">상태: {it.status}</div>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col items-end gap-2">
-              <button
-                className="rounded-md bg-green-600 px-4 py-2 text-white disabled:opacity-50"
-                onClick={() => handleBuyNow(idx)}
-                disabled={it.status !== 'OPEN' || loadingId === it.title}
-              >
-                {loadingId === it.title ? '처리중...' : '즉시 구매'}
-              </button>
-              <div className="text-xs text-zinc-500">상태: {it.status}</div>
-            </div>
-          </article>
-        ))}
+            </article>
+          ))}
+        </section>
+
+        <button className="fixed bottom-6 right-6 bg-orange-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-2xl shadow-lg">＋</button>
       </main>
     </div>
   );

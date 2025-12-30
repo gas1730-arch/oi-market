@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() { return request.auth != null }
+
+    match /users/{uid} {
+      allow create: if isSignedIn() && request.auth.uid == uid;
+      allow read: if true;
+      allow update, delete: if isSignedIn() && request.auth.uid == uid;
+    }
+
+    match /items/{itemId} {
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow read: if true;
+      allow update: if isSignedIn() && resource.data.ownerId == request.auth.uid
+        && (
+          // AUCTION: 수정/삭제 불가 조건 적용은 서버에서 또는 클라이언트에서 확인
+          // 간단한 rule: NORMAL은 OPEN일 때만, AUCTION은 bidCount == 0일 때만
+          (resource.data.saleType == 'NORMAL' && resource.data.status == 'OPEN') ||
+          (resource.data.saleType == 'AUCTION' && (resource.data.bidCount == 0 || resource.data.bidCount == null))
+        );
+
+      allow delete: if isSignedIn() && resource.data.ownerId == request.auth.uid
+        && (
+          (resource.data.saleType == 'NORMAL' && resource.data.status == 'OPEN') ||
+          (resource.data.saleType == 'AUCTION' && (resource.data.bidCount == 0 || resource.data.bidCount == null))
+        );
+    }
+
+    match /items/{itemId}/bids/{bidId} {
+      allow create: if isSignedIn()
+        && get(/databases/$(database)/documents/items/$(itemId)).data.saleType == 'AUCTION'
+        && get(/databases/$(database)/documents/items/$(itemId)).data.status == 'OPEN'
+        && request.auth.uid != null;
+      allow read: if true;
+      allow delete: if false;
+    }
+
+    match /favorites/{uid}/items/{itemId} {
+      allow create, delete: if isSignedIn() && request.auth.uid == uid;
+      allow read: if true;
+    }
+
+    match /chats/{chatId} {
+      allow create: if isSignedIn();
+      allow read, update, delete: if isSignedIn() && (
+        resource.data.sellerId == request.auth.uid || resource.data.otherUid == request.auth.uid
+      );
+
+      match /messages/{msgId} {
+        allow create: if isSignedIn() && (
+          resource.parent.data.sellerId == request.auth.uid || resource.parent.data.otherUid == request.auth.uid
+        );
+        allow read: if isSignedIn() && (
+          resource.parent.data.sellerId == request.auth.uid || resource.parent.data.otherUid == request.auth.uid
+        );
+      }
+    }
+
+    match /reviews/{reviewId} {
+      allow create: if isSignedIn() && request.resource.data.rating >= 1 && request.resource.data.rating <= 5;
+      allow read: if true;
+    }
+  }
+}
