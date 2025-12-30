@@ -16,4 +16,11 @@ body {
 .card-forced-spacing {
   margin-bottom: 0 !important;
   padding: 12px !important;
+  background: white; /* ensure card box contrasts the base */
+  border-radius: 1rem !important; /* match rounded-2xl */
+}
+
+/* subtle base layer effect for cards */
+.card-base-lift {
+  box-shadow: 0 8px 20px rgba(13, 52, 19, 0.06);
 }

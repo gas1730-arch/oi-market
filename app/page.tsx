@@ -168,10 +168,10 @@ export default function Home() {
           ))}
         </nav>
 
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filtered.map((it, idx) => (
-            <article key={it.title} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col items-start gap-4 p-3 card-forced-spacing w-full h-full">
-              <div className="w-full aspect-square bg-gray-200 overflow-hidden rounded-t-xl">
+            <article key={it.title} className="bg-white rounded-2xl border border-gray-100 shadow-md overflow-hidden flex flex-col items-start gap-4 card-forced-spacing w-full h-full relative translate-y-1 hover:-translate-y-1 hover:shadow-lg transition-transform duration-150">
+              <div className="w-full aspect-square bg-gray-200 overflow-hidden rounded-t-2xl">
                 <img
                   src={forcedImage}
                   alt={it.title}
@@ -180,7 +180,7 @@ export default function Home() {
                 />
               </div>
 
-              <div className="flex-1 flex flex-col justify-between gap-2 h-full pt-2 pb-2">
+              <div className="flex-1 flex flex-col justify-between gap-2 h-full p-4">
                 <div>
                   <h3 className="text-black font-extrabold text-lg leading-snug mb-1">{it.title}</h3>
                   <p className="text-sm text-gray-500 mb-2 line-clamp-2">{it.description}</p>
