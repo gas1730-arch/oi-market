@@ -1,6 +1,6 @@
 "use client"
 
-const placeholder = "https://images.unsplash.com/photo-1449333256621-bc90451f0767?auto=format&fit=crop&q=80&w=400";
+const placeholder = "https://images.unsplash.com/photo-1449333256621-bc90451f0767?auto=format&fit=crop&q=80&w=300";
 import { useState } from "react";
 import type { AuctionItem } from "../lib/models";
 
@@ -11,7 +11,7 @@ const initialAuctions: AuctionItem[] = [
     title: "신선한 오이 1kg",
     description: "아침에 수확한 신선한 오이입니다.",
     region: "강원도",
-    images: ["/cucumber.jpg"],
+    images: [placeholder],
     createdAt: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 },
     status: "OPEN",
     startPrice: 1000,
@@ -26,7 +26,7 @@ const initialAuctions: AuctionItem[] = [
     title: "유기농 오이 세트",
     description: "무농약 재배, 맛있는 오이 세트입니다.",
     region: "전라도",
-    images: ["/cucumber2.jpg"],
+    images: [placeholder],
     createdAt: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 },
     status: "OPEN",
     startPrice: 2000,
@@ -169,11 +169,11 @@ export default function Home() {
         <section className="flex flex-col gap-6">
           {filtered.map((it, idx) => (
             <article key={it.title} className="bg-white rounded-[12px] border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row gap-4 md:gap-6 mb-8 p-5 card-forced-spacing">
-              <div className="w-full h-48 md:w-48 md:h-auto flex-shrink-0 bg-gray-200 overflow-hidden flex items-center justify-center">
+              <div className="flex-shrink-0 w-[100px] h-[100px] bg-gray-200 overflow-hidden flex items-center justify-center rounded-lg">
                 <img
                   src={it.images?.[0] || placeholder}
                   alt={it.title}
-                  className="w-full h-full object-cover"
+                  className="w-[100px] h-[100px] object-cover rounded-lg"
                   onError={(e) => { (e.target as HTMLImageElement).src = placeholder }}
                 />
               </div>
