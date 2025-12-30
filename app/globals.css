@@ -8,6 +8,8 @@ body {
   background: #F0F9F0;
   color: #111827;
   --accent: #2D5A27;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
 /* 강제 간격/패딩 규칙: padding만 강제 적용, grid gap으로 간격 조절 */

@@ -168,34 +168,33 @@ export default function Home() {
           ))}
         </nav>
 
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filtered.map((it, idx) => (
-            <article key={it.title} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col sm:flex-row items-start gap-4 p-3 card-forced-spacing w-full h-full">
-              <div className="w-full h-36 sm:flex-shrink-0 sm:w-[84px] sm:h-[84px] bg-gray-200 overflow-hidden flex items-center justify-center rounded-lg">
+            <article key={it.title} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col items-start gap-4 p-3 card-forced-spacing w-full h-full">
+              <div className="w-full aspect-square bg-gray-200 overflow-hidden rounded-t-xl">
                 <img
                   src={forcedImage}
                   alt={it.title}
-                  className="w-full h-full sm:w-[84px] sm:h-[84px] object-cover rounded-lg"
+                  className="w-full h-full object-cover"
                   onError={(e) => { (e.target as HTMLImageElement).src = forcedImage }}
                 />
               </div>
 
-              <div className="flex-1 flex flex-col justify-start gap-1 h-full pt-1 pb-1">
-                <div className="space-y-1">
-                  <h3 className="text-black font-extrabold text-lg leading-snug">{it.title}</h3>
-                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">{it.description}</p>
+              <div className="flex-1 flex flex-col justify-between gap-2 h-full pt-2 pb-2">
+                <div>
+                  <h3 className="text-black font-extrabold text-lg leading-snug mb-1">{it.title}</h3>
+                  <p className="text-sm text-gray-500 mb-2 line-clamp-2">{it.description}</p>
                 </div>
 
-                <div className="mt-2 flex items-center justify-between">
+                <div className="flex items-center justify-between">
                   <div>
                     <div className="text-sm text-gray-500">{it.region} · 남은시간 {timeLeft(it)}</div>
-                    <div className="text-2xl font-black text-[#2D5A27] mt-1">{fmt(it.currentPrice)}</div>
-                    {it.buyNowPrice && <div className="text-sm text-[#2D5A27]">즉시구매 {fmt(it.buyNowPrice)}</div>} 
+                    <div className="text-lg font-bold text-[#2D5A27] mt-1">{fmt(it.currentPrice)}</div>
                   </div>
 
-                  <div className="flex flex-col items-end gap-2">
+                  <div className="flex items-end">
                     <button
-                      className="bg-[#2D5A27] hover:bg-[#25481f] text-white px-3 py-2 rounded-md disabled:opacity-50"
+                      className="bg-[#2D5A27] hover:bg-[#25481f] text-white px-3 py-1 text-sm rounded-md disabled:opacity-50"
                       onClick={() => handleBuyNow(idx)}
                       disabled={it.status !== 'OPEN' || loadingId === it.title}
                     >
@@ -211,7 +210,17 @@ export default function Home() {
           ))}
         </section>
 
-        <button className="fixed bottom-6 right-6 bg-[#2D5A27] text-white rounded-full w-14 h-14 flex items-center justify-center text-2xl shadow-lg">＋</button>
+        {/* Bottom navigation bar */}
+        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-sm z-40">
+          <div className="max-w-[1200px] mx-auto px-4 py-2 flex items-center justify-between gap-4">
+            <button className="flex-1 text-center text-sm text-gray-700">🏠<div className="text-xs">홈</div></button>
+            <button className="flex-1 text-center text-sm text-gray-700">＋<div className="text-xs">등록</div></button>
+            <button className="flex-1 text-center text-sm text-gray-700">👤<div className="text-xs">마이</div></button>
+            <button className="flex-1 text-center text-sm text-gray-700">⚙️<div className="text-xs">설정</div></button>
+          </div>
+        </nav>
+
+        <div className="h-16" />
       </main>
     </div>
   );
