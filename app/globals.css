@@ -5,11 +5,16 @@
 
 body {
   font-family: 'Pretendard', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-  background: #F0F9F0;
+  background: #F0F9F0; /* base floor color */
   color: #111827;
   --accent: #2D5A27;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+  min-height: 100vh;
+}
+
+main {
+  position: relative; /* ensure layers stack properly */
 }
 
 /* 강제 간격/패딩 규칙: padding만 강제 적용, grid gap으로 간격 조절 */
