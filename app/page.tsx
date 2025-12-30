@@ -168,14 +168,14 @@ export default function Home() {
           ))}
         </nav>
 
-        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((it, idx) => (
-            <article key={it.title} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col sm:flex-row items-start gap-4 mb-8 p-3 card-forced-spacing">
-              <div className="flex-shrink-0 w-[100px] h-[100px] bg-gray-200 overflow-hidden flex items-center justify-center rounded-lg">
+            <article key={it.title} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col sm:flex-row items-start gap-4 p-3 card-forced-spacing">
+              <div className="w-full h-36 sm:flex-shrink-0 sm:w-[84px] sm:h-[84px] bg-gray-200 overflow-hidden flex items-center justify-center rounded-lg">
                 <img
                   src={forcedImage}
                   alt={it.title}
-                  className="w-[100px] h-[100px] object-cover rounded-lg"
+                  className="w-full h-full sm:w-[84px] sm:h-[84px] object-cover rounded-lg"
                   onError={(e) => { (e.target as HTMLImageElement).src = forcedImage }}
                 />
               </div>
