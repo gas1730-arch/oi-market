@@ -125,9 +125,9 @@ export default function Home() {
     <div className="min-h-screen font-sans p-0 bg-[#F2F3F6]">
       {/* Header */}
       <header className="sticky top-0 bg-white shadow-sm z-20">
-        <div className="max-w-[600px] mx-auto px-4 py-3 flex items-center gap-4">
+        <div className="max-w-[900px] mx-auto px-4 py-3 flex items-center gap-4">
           <div className="flex items-center gap-3 w-1/3">
-            <div className="w-10 h-10 bg-[#FF8224] rounded-md flex items-center justify-center text-white font-bold">오</div>
+            <div className="w-10 h-10 bg-[#2D5A27] rounded-md flex items-center justify-center text-white font-bold">오</div>
             <div className="text-lg font-bold">오이마켓</div>
           </div>
 
@@ -153,24 +153,24 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-[600px] mx-auto px-4 py-6">
+      <main className="max-w-[900px] mx-auto px-4 py-6">
         <nav className="flex gap-3 mb-4 overflow-auto">
           <button
-            className={`px-3 py-1 rounded-full ${!activeCat ? 'bg-orange-100 text-orange-600' : 'bg-white'}`}
+            className={`px-3 py-1 rounded-full ${!activeCat ? 'bg-green-100 text-[#2D5A27]' : 'bg-white'}`}
             onClick={() => setActiveCat(null)}
           >전체</button>
           {categories.map((c) => (
             <button
               key={c}
-              className={`px-3 py-1 rounded-full ${activeCat === c ? 'bg-orange-100 text-orange-600' : 'bg-white'}`}
+              className={`px-3 py-1 rounded-full ${activeCat === c ? 'bg-green-100 text-[#2D5A27]' : 'bg-white'}`}
               onClick={() => setActiveCat(activeCat === c ? null : c)}
             >{c}</button>
           ))}
         </nav>
 
-        <section className="flex flex-col gap-6">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filtered.map((it, idx) => (
-            <article key={it.title} className="bg-white rounded-[12px] border border-gray-100 shadow-sm overflow-hidden flex flex-row items-start gap-4 mb-8 p-3 card-forced-spacing">
+            <article key={it.title} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-row items-start gap-4 mb-8 p-3 card-forced-spacing">
               <div className="flex-shrink-0 w-[100px] h-[100px] bg-gray-200 overflow-hidden flex items-center justify-center rounded-lg">
                 <img
                   src={forcedImage}
@@ -189,13 +189,13 @@ export default function Home() {
                 <div className="mt-2 flex items-center justify-between">
                   <div>
                     <div className="text-sm text-gray-500">{it.region} · 남은시간 {timeLeft(it)}</div>
-                    <div className="text-2xl font-black text-[#FF8224] mt-1">{fmt(it.currentPrice)}</div>
-                    {it.buyNowPrice && <div className="text-sm text-[#FF8224]">즉시구매 {fmt(it.buyNowPrice)}</div>}
+                    <div className="text-2xl font-black text-[#2D5A27] mt-1">{fmt(it.currentPrice)}</div>
+                    {it.buyNowPrice && <div className="text-sm text-[#2D5A27]">즉시구매 {fmt(it.buyNowPrice)}</div>} 
                   </div>
 
                   <div className="flex flex-col items-end gap-2">
                     <button
-                      className="bg-[#FF8224] hover:bg-orange-600 text-white px-3 py-2 rounded-md disabled:opacity-50"
+                      className="bg-[#2D5A27] hover:bg-[#25481f] text-white px-3 py-2 rounded-md disabled:opacity-50"
                       onClick={() => handleBuyNow(idx)}
                       disabled={it.status !== 'OPEN' || loadingId === it.title}
                     >
@@ -211,7 +211,7 @@ export default function Home() {
           ))}
         </section>
 
-        <button className="fixed bottom-6 right-6 bg-[#FF8224] text-white rounded-full w-14 h-14 flex items-center justify-center text-2xl shadow-lg">＋</button>
+        <button className="fixed bottom-6 right-6 bg-[#2D5A27] text-white rounded-full w-14 h-14 flex items-center justify-center text-2xl shadow-lg">＋</button>
       </main>
     </div>
   );

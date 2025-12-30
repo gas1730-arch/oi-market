@@ -7,6 +7,7 @@ body {
   font-family: 'Pretendard', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
   background: #F0F9F0;
   color: #111827;
+  --accent: #2D5A27;
 }
 
 /* 강제 간격/패딩 규칙 (요청: margin-bottom: 24px !important; padding: 12px !important;) */
