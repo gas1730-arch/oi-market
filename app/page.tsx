@@ -1,6 +1,8 @@
 "use client"
 
-const placeholder = "https://images.unsplash.com/photo-1449333256621-bc90451f0767?auto=format&fit=crop&q=80&w=300";
+const placeholder = "https://images.unsplash.com/photo-1449333256621-bc90451f0767?auto=format&fit=crop&q=80&w=400";
+// Force the provided image URL for testing (fallback will also use this)
+const forcedImage = "https://images.unsplash.com/photo-1449333256621-bc90451f0767?auto=format&fit=crop&q=80&w=400";
 import { useState } from "react";
 import type { AuctionItem } from "../lib/models";
 
@@ -168,17 +170,17 @@ export default function Home() {
 
         <section className="flex flex-col gap-6">
           {filtered.map((it, idx) => (
-            <article key={it.title} className="bg-white rounded-[12px] border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row gap-4 md:gap-6 mb-8 p-5 card-forced-spacing">
+            <article key={it.title} className="bg-white rounded-[12px] border border-gray-100 shadow-sm overflow-hidden flex flex-row items-center gap-4 mb-8 p-5 card-forced-spacing">
               <div className="flex-shrink-0 w-[100px] h-[100px] bg-gray-200 overflow-hidden flex items-center justify-center rounded-lg">
                 <img
-                  src={it.images?.[0] || placeholder}
+                  src={forcedImage}
                   alt={it.title}
                   className="w-[100px] h-[100px] object-cover rounded-lg"
-                  onError={(e) => { (e.target as HTMLImageElement).src = placeholder }}
+                  onError={(e) => { (e.target as HTMLImageElement).src = forcedImage }}
                 />
               </div>
 
-              <div className="flex-1 flex flex-col justify-between">
+              <div className="flex-1 flex flex-col justify-between h-full py-2">
                 <div className="space-y-3">
                   <h3 className="text-black font-extrabold text-lg leading-snug">{it.title}</h3>
                   <p className="text-sm text-gray-500 mt-1 line-clamp-2">{it.description}</p>
