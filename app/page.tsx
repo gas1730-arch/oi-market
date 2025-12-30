@@ -170,7 +170,7 @@ export default function Home() {
 
         <section className="flex flex-col gap-6">
           {filtered.map((it, idx) => (
-            <article key={it.title} className="bg-white rounded-[12px] border border-gray-100 shadow-sm overflow-hidden flex flex-row items-center gap-4 mb-8 p-5 card-forced-spacing">
+            <article key={it.title} className="bg-white rounded-[12px] border border-gray-100 shadow-sm overflow-hidden flex flex-row items-start gap-4 mb-8 p-3 card-forced-spacing">
               <div className="flex-shrink-0 w-[100px] h-[100px] bg-gray-200 overflow-hidden flex items-center justify-center rounded-lg">
                 <img
                   src={forcedImage}
@@ -180,13 +180,13 @@ export default function Home() {
                 />
               </div>
 
-              <div className="flex-1 flex flex-col justify-between h-full py-2">
-                <div className="space-y-3">
+              <div className="flex-1 flex flex-col justify-start gap-1 h-full pt-1 pb-1">
+                <div className="space-y-1">
                   <h3 className="text-black font-extrabold text-lg leading-snug">{it.title}</h3>
                   <p className="text-sm text-gray-500 mt-1 line-clamp-2">{it.description}</p>
                 </div>
 
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-2 flex items-center justify-between">
                   <div>
                     <div className="text-sm text-gray-500">{it.region} · 남은시간 {timeLeft(it)}</div>
                     <div className="text-2xl font-black text-[#FF8224] mt-1">{fmt(it.currentPrice)}</div>
