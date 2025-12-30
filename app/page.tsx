@@ -50,6 +50,18 @@ export default function Home() {
     return it.title.toLowerCase().includes(query.toLowerCase()) || it.description.toLowerCase().includes(query.toLowerCase());
   });
 
+  function StatusBadge({ status }: { status: string }) {
+    const map: Record<string, string> = {
+      OPEN: 'bg-green-100 text-green-800',
+      SOLD: 'bg-gray-100 text-gray-600',
+      ENDED: 'bg-gray-100 text-gray-600',
+    }
+    const cls = map[status] || 'bg-gray-100 text-gray-600'
+    return (
+      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${cls}`}>{status}</span>
+    )
+  }
+
   function fmt(price?: number) {
     if (!price) return '-';
     return new Intl.NumberFormat('ko-KR').format(price) + '원';
@@ -111,14 +123,14 @@ export default function Home() {
     <div className="min-h-screen font-sans p-0 bg-[#F2F3F6]">
       {/* Header */}
       <header className="sticky top-0 bg-white shadow-sm z-20">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
-          <div className="flex items-center gap-3 w-1/4">
+        <div className="max-w-[600px] mx-auto px-4 py-3 flex items-center gap-4">
+          <div className="flex items-center gap-3 w-1/3">
             <div className="w-10 h-10 bg-[#FF8224] rounded-md flex items-center justify-center text-white font-bold">오</div>
             <div className="text-lg font-bold">오이마켓</div>
           </div>
 
           <div className="flex-1 flex justify-center">
-            <div className="w-full max-w-2xl">
+            <div className="w-full max-w-[420px]">
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -128,7 +140,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="w-1/4 flex justify-end gap-4">
+          <div className="w-1/3 flex justify-end gap-4">
             <button aria-label="채팅" className="text-gray-600">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke="#374151" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
@@ -139,7 +151,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-6">
+      <main className="max-w-[600px] mx-auto px-4 py-6">
         <nav className="flex gap-3 mb-4 overflow-auto">
           <button
             className={`px-3 py-1 rounded-full ${!activeCat ? 'bg-orange-100 text-orange-600' : 'bg-white'}`}
@@ -154,10 +166,10 @@ export default function Home() {
           ))}
         </nav>
 
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 gap-8">
           {filtered.map((it, idx) => (
-            <article key={it.title} className="bg-white rounded-[12px] border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row">
-              <div className="md:w-48 w-full h-44 md:h-auto flex-shrink-0 bg-gray-100 overflow-hidden">
+            <article key={it.title} className="bg-white rounded-[16px] border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row">
+              <div className="w-full h-48 md:w-48 md:h-auto flex-shrink-0 bg-gray-200 overflow-hidden">
                 <img
                   src={it.images?.[0] || placeholder}
                   alt={it.title}
@@ -166,16 +178,16 @@ export default function Home() {
                 />
               </div>
 
-              <div className="p-4 flex-1 flex flex-col justify-between">
+              <div className="p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-black font-bold text-lg leading-snug">{it.title}</h3>
+                  <h3 className="text-black font-extrabold text-lg leading-snug">{it.title}</h3>
                   <p className="text-sm text-gray-500 mt-1 line-clamp-2">{it.description}</p>
                 </div>
 
-                <div className="mt-3 flex items-center justify-between">
+                <div className="mt-4 flex items-center justify-between">
                   <div>
                     <div className="text-sm text-gray-500">{it.region} · 남은시간 {timeLeft(it)}</div>
-                    <div className="text-xl font-extrabold text-[#FF8224] mt-1">{fmt(it.currentPrice)}</div>
+                    <div className="text-2xl font-black text-[#FF8224] mt-1">{fmt(it.currentPrice)}</div>
                     {it.buyNowPrice && <div className="text-sm text-[#FF8224]">즉시구매 {fmt(it.buyNowPrice)}</div>}
                   </div>
 
@@ -187,7 +199,9 @@ export default function Home() {
                     >
                       {loadingId === it.title ? '처리중...' : '즉시 구매'}
                     </button>
-                    <div className="text-xs text-gray-400">상태: {it.status}</div>
+                    <div className="text-xs">
+                      <StatusBadge status={it.status} />
+                    </div>
                   </div>
                 </div>
               </div>
