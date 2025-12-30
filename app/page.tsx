@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image";
+const placeholder = "https://images.unsplash.com/photo-1449333256621-bc90451f0767?auto=format&fit=crop&q=80&w=400";
 import { useState } from "react";
 import type { AuctionItem } from "../lib/models";
 
@@ -108,24 +108,38 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans p-6">
-      <header className="max-w-5xl mx-auto mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">오이마켓</h1>
-          <div className="text-sm text-zinc-500">지역 기반 중고 & 경매 마켓</div>
-        </div>
-        <div className="flex items-center gap-3">
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="검색어를 입력해보세요 (예: 오이, 유기농)"
-            className="border rounded-md px-3 py-2 w-64 bg-white"
-          />
-          <button className="text-sm text-white bg-orange-500 px-3 py-2 rounded-md">내 동네</button>
+    <div className="min-h-screen font-sans p-0 bg-[#F2F3F6]">
+      {/* Header */}
+      <header className="sticky top-0 bg-white shadow-sm z-20">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+          <div className="flex items-center gap-3 w-1/4">
+            <div className="w-10 h-10 bg-[#FF8224] rounded-md flex items-center justify-center text-white font-bold">오</div>
+            <div className="text-lg font-bold">오이마켓</div>
+          </div>
+
+          <div className="flex-1 flex justify-center">
+            <div className="w-full max-w-2xl">
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="동네, 상품명을 입력해보세요"
+                className="w-full border rounded-full px-4 py-2 shadow-sm focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="w-1/4 flex justify-end gap-4">
+            <button aria-label="채팅" className="text-gray-600">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke="#374151" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+            <button aria-label="알림" className="text-gray-600">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6 6 0 0 0-5-5.917V4a2 2 0 1 0-4 0v1.083A6 6 0 0 0 4 11v3.159c0 .538-.214 1.055-.595 1.436L2 17h5" stroke="#374151" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto">
+      <main className="max-w-6xl mx-auto px-4 py-6">
         <nav className="flex gap-3 mb-4 overflow-auto">
           <button
             className={`px-3 py-1 rounded-full ${!activeCat ? 'bg-orange-100 text-orange-600' : 'bg-white'}`}
@@ -140,41 +154,40 @@ export default function Home() {
           ))}
         </nav>
 
-        <section className="grid sm:grid-cols-2 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((it, idx) => (
-            <article key={it.title} className="rounded-lg bg-white p-4 shadow-sm flex">
-              <div className="w-32 h-32 rounded-md overflow-hidden flex-shrink-0 bg-zinc-100">
-                {it.images[0] ? (
-                  <img src={it.images[0]} alt={it.title} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-400">이미지</div>
-                )}
+            <article key={it.title} className="bg-white rounded-[12px] border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row">
+              <div className="md:w-48 w-full h-44 md:h-auto flex-shrink-0 bg-gray-100 overflow-hidden">
+                <img
+                  src={it.images?.[0] || placeholder}
+                  alt={it.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).src = placeholder }}
+                />
               </div>
-              <div className="flex-1 px-4 flex flex-col justify-between">
+
+              <div className="p-4 flex-1 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">{it.title}</h3>
-                    <div className="text-sm text-zinc-500">{it.region}</div>
-                  </div>
-                  <p className="text-sm text-zinc-600 mt-1 line-clamp-2">{it.description}</p>
+                  <h3 className="text-black font-bold text-lg leading-snug">{it.title}</h3>
+                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">{it.description}</p>
                 </div>
 
-                <div className="flex items-center justify-between mt-3">
+                <div className="mt-3 flex items-center justify-between">
                   <div>
-                    <div className="text-sm text-zinc-500">현재가</div>
-                    <div className="text-xl font-bold text-zinc-900">{fmt(it.currentPrice)}</div>
-                    {it.buyNowPrice && <div className="text-sm text-orange-600">즉시구매 {fmt(it.buyNowPrice)}</div>}
+                    <div className="text-sm text-gray-500">{it.region} · 남은시간 {timeLeft(it)}</div>
+                    <div className="text-xl font-extrabold text-[#FF8224] mt-1">{fmt(it.currentPrice)}</div>
+                    {it.buyNowPrice && <div className="text-sm text-[#FF8224]">즉시구매 {fmt(it.buyNowPrice)}</div>}
                   </div>
+
                   <div className="flex flex-col items-end gap-2">
                     <button
-                      className="bg-orange-500 text-white px-3 py-2 rounded-md disabled:opacity-50"
+                      className="bg-[#FF8224] hover:bg-orange-600 text-white px-3 py-2 rounded-md disabled:opacity-50"
                       onClick={() => handleBuyNow(idx)}
                       disabled={it.status !== 'OPEN' || loadingId === it.title}
                     >
                       {loadingId === it.title ? '처리중...' : '즉시 구매'}
                     </button>
-                    <div className="text-xs text-zinc-500">남은시간: {timeLeft(it)}</div>
-                    <div className="text-xs text-zinc-500">상태: {it.status}</div>
+                    <div className="text-xs text-gray-400">상태: {it.status}</div>
                   </div>
                 </div>
               </div>
@@ -182,7 +195,7 @@ export default function Home() {
           ))}
         </section>
 
-        <button className="fixed bottom-6 right-6 bg-orange-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-2xl shadow-lg">＋</button>
+        <button className="fixed bottom-6 right-6 bg-[#FF8224] text-white rounded-full w-14 h-14 flex items-center justify-center text-2xl shadow-lg">＋</button>
       </main>
     </div>
   );
