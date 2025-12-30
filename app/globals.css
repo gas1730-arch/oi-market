@@ -8,3 +8,9 @@ body {
   background: #F0F9F0;
   color: #111827;
 }
+
+/* 강제 간격/패딩 규칙 (요청: margin-bottom: 24px !important; padding: 20px !important;) */
+.card-forced-spacing {
+  margin-bottom: 24px !important;
+  padding: 20px !important;
+}

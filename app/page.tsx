@@ -166,9 +166,9 @@ export default function Home() {
           ))}
         </nav>
 
-        <section className="grid grid-cols-1 gap-10">
+        <section className="flex flex-col gap-6">
           {filtered.map((it, idx) => (
-            <article key={it.title} className="bg-white rounded-[12px] border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row gap-4 md:gap-6">
+            <article key={it.title} className="bg-white rounded-[12px] border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row gap-4 md:gap-6 mb-8 p-5 card-forced-spacing">
               <div className="w-full h-48 md:w-48 md:h-auto flex-shrink-0 bg-gray-200 overflow-hidden flex items-center justify-center">
                 <img
                   src={it.images?.[0] || placeholder}
@@ -178,7 +178,7 @@ export default function Home() {
                 />
               </div>
 
-              <div className="p-6 flex-1 flex flex-col justify-between">
+              <div className="flex-1 flex flex-col justify-between">
                 <div className="space-y-3">
                   <h3 className="text-black font-extrabold text-lg leading-snug">{it.title}</h3>
                   <p className="text-sm text-gray-500 mt-1 line-clamp-2">{it.description}</p>
