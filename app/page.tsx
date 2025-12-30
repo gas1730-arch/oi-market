@@ -13,7 +13,7 @@ const initialAuctions: AuctionItem[] = [
     title: "신선한 오이 1kg",
     description: "아침에 수확한 신선한 오이입니다.",
     region: "강원도",
-    images: [placeholder],
+    images: [forcedImage],
     createdAt: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 },
     status: "OPEN",
     startPrice: 1000,
@@ -28,7 +28,7 @@ const initialAuctions: AuctionItem[] = [
     title: "유기농 오이 세트",
     description: "무농약 재배, 맛있는 오이 세트입니다.",
     region: "전라도",
-    images: [placeholder],
+    images: [forcedImage],
     createdAt: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 },
     status: "OPEN",
     startPrice: 2000,
@@ -168,9 +168,9 @@ export default function Home() {
           ))}
         </nav>
 
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filtered.map((it, idx) => (
-            <article key={it.title} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col sm:flex-row items-start gap-4 p-3 card-forced-spacing">
+            <article key={it.title} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col sm:flex-row items-start gap-4 p-3 card-forced-spacing w-full h-full">
               <div className="w-full h-36 sm:flex-shrink-0 sm:w-[84px] sm:h-[84px] bg-gray-200 overflow-hidden flex items-center justify-center rounded-lg">
                 <img
                   src={forcedImage}
